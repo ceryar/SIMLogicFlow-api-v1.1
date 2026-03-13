@@ -7,8 +7,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.simlogicflow.model.DocumentType;
 import com.simlogicflow.model.Role;
 import com.simlogicflow.model.User;
+import com.simlogicflow.repository.DocumentTypeRepository;
 import com.simlogicflow.repository.RolRepository;
 import com.simlogicflow.repository.UserRepository;
 
@@ -18,16 +20,20 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final RolRepository rolRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DocumentTypeRepository documentTypeRepository;
 
-    public DatabaseSeeder(RolRepository rolRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DatabaseSeeder(RolRepository rolRepository, UserRepository userRepository,
+            PasswordEncoder passwordEncoder, DocumentTypeRepository documentTypeRepository) {
         this.rolRepository = rolRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.documentTypeRepository = documentTypeRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
         seedRoles();
+        seedDocumentTypes();
         seedAdminUser();
     }
 
@@ -48,6 +54,19 @@ public class DatabaseSeeder implements CommandLineRunner {
                         .description("Rol de " + roleName.toLowerCase())
                         .build());
                 System.out.println("Rol creado: " + roleName);
+            }
+        }
+    }
+
+    private void seedDocumentTypes() {
+        List<String> typeNames = Arrays.asList("CEDULA", "PASAPORTE");
+
+        for (String typeName : typeNames) {
+            if (documentTypeRepository.findByName(typeName).isEmpty()) {
+                documentTypeRepository.save(DocumentType.builder()
+                        .name(typeName)
+                        .build());
+                System.out.println("Tipo de documento creado: " + typeName);
             }
         }
     }
