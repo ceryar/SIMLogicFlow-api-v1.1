@@ -9,6 +9,8 @@ import com.simlogicflow.repository.CourseRepository;
 import com.simlogicflow.repository.DocumentTypeRepository;
 import com.simlogicflow.repository.RolRepository;
 import com.simlogicflow.repository.UserRepository;
+import com.simlogicflow.model.Room;
+import com.simlogicflow.model.User;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -135,7 +137,7 @@ public class UserService {
                 boolean isPseudopilot = roleName.contains("pseudo");
 
                 if (!isStudent && !isInstructor && !isPseudopilot) {
-                        return; // We only check capacities for these specific roles
+                        return; // Solo validamos para estos roles
                 }
 
                 int maxStudents = 0;
@@ -146,9 +148,10 @@ public class UserService {
                 boolean isIndra = simName.contains("indra");
                 boolean isThales = simName.contains("thales");
 
-                if (course.getRooms() != null) {
+                if (course.getRooms() != null && !course.getRooms().isEmpty()) {
                         for (com.simlogicflow.model.Room room : course.getRooms()) {
                                 String roomName = room.getName().toLowerCase();
+                                int roomCap = room.getCapacity() != null ? room.getCapacity() : 0;
 
                                 if (isIndra) {
                                         if (roomName.contains("radar")) {
@@ -159,6 +162,10 @@ public class UserService {
                                                 maxInstructors += 5;
                                         } else if (roomName.contains("pseudo")) {
                                                 maxPseudopilots += 10;
+                                        } else {
+                                                // Fallback para salas Indra no especificadas
+                                                maxStudents += (roomCap > 0) ? (int) (roomCap * 0.8) : 5;
+                                                maxInstructors += (roomCap > 0) ? (int) (roomCap * 0.2) : 2;
                                         }
                                 } else if (isThales) {
                                         if (roomName.contains("radar")) {
@@ -169,16 +176,42 @@ public class UserService {
                                                 maxInstructors += 5;
                                         } else if (roomName.contains("pseudo")) {
                                                 maxPseudopilots += 12;
+                                        } else {
+                                                // Fallback para salas Thales no especificadas
+                                                maxStudents += (roomCap > 0) ? (int) (roomCap * 0.8) : 5;
+                                                maxInstructors += (roomCap > 0) ? (int) (roomCap * 0.2) : 2;
+                                        }
+                                } else {
+                                        // Fallback para otros simuladores o salas genéricas
+                                        if (roomName.contains("pseudo")) {
+                                                maxPseudopilots += (roomCap > 0) ? roomCap : 10;
+                                        } else {
+                                                // Si tiene capacidad definida, la usamos; si no, damos valores mínimos
+                                                maxStudents += (roomCap > 0) ? (int) (roomCap * 0.7) : 10;
+                                                maxInstructors += (roomCap > 0) ? Math.max(1, (int) (roomCap * 0.2))
+                                                                : 4;
                                         }
                                 }
                         }
+                } else {
+                        // Si no hay salas asignadas, permitimos una capacidad base por defecto
+                        maxStudents = 20;
+                        maxInstructors = 5;
+                        maxPseudopilots = 10;
                 }
 
-                // Count current users by role
+                // Contar usuarios actuales
                 int currentStudents = 0;
                 int currentInstructors = 0;
                 int currentPseudopilots = 0;
 
+                // 1. Contar los campos fijos del curso (si están asignados)
+                if (course.getInstructor() != null)
+                        currentInstructors++;
+                if (course.getPseudoPilot() != null)
+                        currentPseudopilots++;
+
+                // 2. Contar de la lista de usuarios adicionales (ManyToMany)
                 if (course.getUsers() != null) {
                         for (User u : course.getUsers()) {
                                 String rName = u.getRole().getName().toLowerCase();
