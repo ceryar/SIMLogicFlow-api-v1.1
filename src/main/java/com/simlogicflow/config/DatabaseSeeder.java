@@ -12,15 +12,18 @@ import com.simlogicflow.model.User;
 import com.simlogicflow.repository.RolRepository;
 import com.simlogicflow.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final RolRepository rolRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public DatabaseSeeder(RolRepository rolRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.rolRepository = rolRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void run(String... args) throws Exception {
