@@ -149,6 +149,9 @@ public class UserService {
                 boolean isThales = simName.contains("thales");
 
                 if (course.getRooms() != null && !course.getRooms().isEmpty()) {
+                        boolean hasSimulationRoom = false; // Radar o Aeródromo
+                        boolean hasPseudoRoom = false;
+
                         for (com.simlogicflow.model.Room room : course.getRooms()) {
                                 String roomName = room.getName().toLowerCase();
                                 int roomCap = room.getCapacity() != null ? room.getCapacity() : 0;
@@ -157,11 +160,13 @@ public class UserService {
                                         if (roomName.contains("radar")) {
                                                 maxStudents += 10;
                                                 maxInstructors += 5;
+                                                hasSimulationRoom = true;
                                         } else if (roomName.contains("aeródromo") || roomName.contains("aerodromo")) {
                                                 maxStudents += 8;
                                                 maxInstructors += 5;
+                                                hasSimulationRoom = true;
                                         } else if (roomName.contains("pseudo")) {
-                                                maxPseudopilots += 10;
+                                                hasPseudoRoom = true;
                                         } else {
                                                 // Fallback para salas Indra no especificadas
                                                 maxStudents += (roomCap > 0) ? (int) (roomCap * 0.8) : 5;
@@ -171,11 +176,13 @@ public class UserService {
                                         if (roomName.contains("radar")) {
                                                 maxStudents += 10;
                                                 maxInstructors += 5;
+                                                hasSimulationRoom = true;
                                         } else if (roomName.contains("aeródromo") || roomName.contains("aerodromo")) {
                                                 maxStudents += 8;
                                                 maxInstructors += 5;
+                                                hasSimulationRoom = true;
                                         } else if (roomName.contains("pseudo")) {
-                                                maxPseudopilots += 12;
+                                                hasPseudoRoom = true;
                                         } else {
                                                 // Fallback para salas Thales no especificadas
                                                 maxStudents += (roomCap > 0) ? (int) (roomCap * 0.8) : 5;
@@ -192,6 +199,13 @@ public class UserService {
                                                                 : 4;
                                         }
                                 }
+                        }
+
+                        // Lógica de Pseudopilotos compartidos para Indra y Thales
+                        if (isIndra && (hasSimulationRoom || hasPseudoRoom)) {
+                                maxPseudopilots = 10;
+                        } else if (isThales && (hasSimulationRoom || hasPseudoRoom)) {
+                                maxPseudopilots = 12;
                         }
                 } else {
                         // Si no hay salas asignadas, permitimos una capacidad base por defecto
