@@ -60,7 +60,6 @@ public class User {
     @Column(unique = true)
     private String documentNumber;
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
     private Set<Course> courses;

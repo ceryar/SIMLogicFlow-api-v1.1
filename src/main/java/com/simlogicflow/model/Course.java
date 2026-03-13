@@ -57,8 +57,21 @@ public class Course {
     @JoinColumn(name = "simulator_id", nullable = false)
     private Simulator simulator;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "courses")
     private Set<User> users;
+
+    @ManyToOne
+    @JoinColumn(name = "coordinator_id")
+    private User coordinator;
+
+    @ManyToOne
+    @JoinColumn(name = "pseudopilot_id")
+    private User pseudoPilot;
+
+    @ManyToOne
+    @JoinColumn(name = "instructor_id")
+    private User instructor;
 
     @JsonIgnore
     @OneToMany(mappedBy = "course", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)

@@ -13,6 +13,8 @@ import com.simlogicflow.model.Simulator;
 import com.simlogicflow.repository.CourseRepository;
 import com.simlogicflow.repository.RoomRepository;
 import com.simlogicflow.repository.SimulatorRepository;
+import com.simlogicflow.repository.UserRepository;
+import com.simlogicflow.model.User;
 
 @Service
 public class CourseService {
@@ -25,6 +27,9 @@ public class CourseService {
 
     @Autowired
     private SimulatorRepository simulatorRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
@@ -67,6 +72,12 @@ public class CourseService {
 
         if (dto.getRoomIds() != null && !dto.getRoomIds().isEmpty()) {
             java.util.List<Room> rooms = roomRepository.findAllById(dto.getRoomIds());
+            for (Room room : rooms) {
+                if (room.getActive() != null && !room.getActive()) {
+                    throw new RuntimeException(
+                            "El aula '" + room.getName() + "' está inactiva y no se puede asignar al curso.");
+                }
+            }
             course.setRooms(new java.util.HashSet<>(rooms));
         }
 
@@ -74,6 +85,30 @@ public class CourseService {
             Simulator simulator = simulatorRepository.findById(dto.getSimulatorId())
                     .orElseThrow(() -> new RuntimeException("Simulator not found with id " + dto.getSimulatorId()));
             course.setSimulator(simulator);
+        }
+
+        if (dto.getCoordinatorId() != null) {
+            User coordinator = userRepository.findById(dto.getCoordinatorId())
+                    .orElseThrow(() -> new RuntimeException("Coordinator not found with id " + dto.getCoordinatorId()));
+            course.setCoordinator(coordinator);
+        } else {
+            course.setCoordinator(null);
+        }
+
+        if (dto.getPseudoPilotId() != null) {
+            User pseudoPilot = userRepository.findById(dto.getPseudoPilotId())
+                    .orElseThrow(() -> new RuntimeException("PseudoPilot not found with id " + dto.getPseudoPilotId()));
+            course.setPseudoPilot(pseudoPilot);
+        } else {
+            course.setPseudoPilot(null);
+        }
+
+        if (dto.getInstructorId() != null) {
+            User instructor = userRepository.findById(dto.getInstructorId())
+                    .orElseThrow(() -> new RuntimeException("Instructor not found with id " + dto.getInstructorId()));
+            course.setInstructor(instructor);
+        } else {
+            course.setInstructor(null);
         }
     }
 }

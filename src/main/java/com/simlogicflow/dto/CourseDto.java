@@ -20,5 +20,8 @@ public class CourseDto {
     private Integer horas;
     private java.util.List<Long> roomIds;
     private Long simulatorId;
+    private Long coordinatorId;
+    private Long pseudoPilotId;
+    private Long instructorId;
 
 }

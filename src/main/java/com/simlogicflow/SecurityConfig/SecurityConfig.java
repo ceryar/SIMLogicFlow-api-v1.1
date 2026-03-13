@@ -60,7 +60,8 @@ public class SecurityConfig {
                                                                 "COORDINADOR TÉCNICO", "TÉCNICO MANTENIMIENTO",
                                                                 "TECNICO")
                                                 .requestMatchers("/api/v1/users", "/api/v1/users/**")
-                                                .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR ACADÉMICO")
+                                                .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR ACADÉMICO", "COORACAD",
+                                                                "COORDINADOR TÉCNICO", "TECNICO")
                                                 .requestMatchers(org.springframework.http.HttpMethod.GET,
                                                                 "/api/v1/courses/**",
                                                                 "/api/v1/pro-courses/**")
@@ -69,9 +70,9 @@ public class SecurityConfig {
                                                                 "COORDINADOR TÉCNICO", "TÉCNICO MANTENIMIENTO")
                                                 .requestMatchers(org.springframework.http.HttpMethod.GET,
                                                                 "/api/v1/maintenances/**")
-                                                .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR TÉCNICO",
+                                                .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR TÉCNICO", "TECNICO",
                                                                 "TÉCNICO MANTENIMIENTO", "ESTUDIANTE", "INSTRUCTOR",
-                                                                "PSEUDOPILOTO")
+                                                                "PSEUDOPILOTO", "COORDINADOR ACADÉMICO", "COORACAD")
                                                 .requestMatchers("/api/v1/courses/**")
                                                 .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR ACADÉMICO")
                                                 .requestMatchers("/api/v1/pro-courses/**")
