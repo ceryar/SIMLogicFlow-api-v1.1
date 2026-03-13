@@ -54,6 +54,11 @@ public class SecurityConfig {
                                                                 "ESTUDIANTE",
                                                                 "INSTRUCTOR",
                                                                 "PSEUDOPILOTO")
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                                                "/api/v1/users/role/**")
+                                                .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR ACADÉMICO",
+                                                                "COORDINADOR TÉCNICO", "TÉCNICO MANTENIMIENTO",
+                                                                "TECNICO")
                                                 .requestMatchers("/api/v1/users", "/api/v1/users/**")
                                                 .hasAnyAuthority("ADMINISTRADOR", "COORDINADOR ACADÉMICO")
                                                 .requestMatchers(org.springframework.http.HttpMethod.GET,

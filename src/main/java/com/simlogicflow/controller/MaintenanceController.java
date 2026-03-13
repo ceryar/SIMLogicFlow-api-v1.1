@@ -29,19 +29,19 @@ public class MaintenanceController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO', 'TÉCNICO MANTENIMIENTO')")
     public Maintenance createMaintenance(@RequestBody MaintenanceDto dto) {
         return maintenanceService.createMaintenance(dto);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO', 'TÉCNICO MANTENIMIENTO')")
     public Maintenance updateMaintenance(@PathVariable("id") Long id, @RequestBody MaintenanceDto dto) {
         return maintenanceService.updateMaintenance(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO', 'TÉCNICO MANTENIMIENTO')")
     public void deleteMaintenance(@PathVariable("id") Long id) {
         maintenanceService.deleteMaintenance(id);
     }

@@ -7,6 +7,8 @@ import java.util.Set;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -54,6 +56,11 @@ public class Maintenance {
     @ManyToOne
     @JoinColumn(name = "maintenance_type_id")
     private MaintenanceType maintenanceType;
+    @ManyToOne
+    @JoinColumn(name = "technician_id")
+    private User technician;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "maintenance")
     private Set<MaintenanceHistory> history;
 

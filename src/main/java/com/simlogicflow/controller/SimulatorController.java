@@ -25,7 +25,7 @@ public class SimulatorController {
     private SimulatorService simulatorService;
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'COORDINADOR ACADÉMICO', 'TECNICO')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'COORDINADOR ACADÉMICO', 'COORDINADOR TÉCNICO', 'TÉCNICO MANTENIMIENTO', 'TECNICO')")
     public List<Simulator> getAllSimulators() {
         return simulatorService.getAllSimulators();
     }

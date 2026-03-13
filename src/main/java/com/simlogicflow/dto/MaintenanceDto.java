@@ -21,5 +21,6 @@ public class MaintenanceDto {
     private LocalTime horaFin;
     private Long simulatorId;
     private Long maintenanceTypeId;
+    private Long technicianId;
 
 }

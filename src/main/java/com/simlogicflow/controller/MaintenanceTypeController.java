@@ -19,7 +19,7 @@ import com.simlogicflow.service.MaintenanceTypeService;
 
 @RestController
 @RequestMapping("/api/v1/maintenance-types")
-@PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO')")
+@PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'TECNICO', 'COORDINADOR TÉCNICO', 'TÉCNICO MANTENIMIENTO')")
 public class MaintenanceTypeController {
 
     @Autowired

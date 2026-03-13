@@ -13,6 +13,8 @@ import com.simlogicflow.model.Simulator;
 import com.simlogicflow.repository.MaintenanceRepository;
 import com.simlogicflow.repository.MaintenanceTypeRepository;
 import com.simlogicflow.repository.SimulatorRepository;
+import com.simlogicflow.repository.UserRepository;
+import com.simlogicflow.model.User;
 
 @Service
 public class MaintenanceService {
@@ -28,6 +30,9 @@ public class MaintenanceService {
 
     @Autowired
     private com.simlogicflow.repository.ProCourseRepository proCourseRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Maintenance> getAllMaintenances() {
         return maintenanceRepository.findAll();
@@ -71,6 +76,14 @@ public class MaintenanceService {
                     .orElseThrow(() -> new RuntimeException(
                             "MaintenanceType not found with id " + dto.getMaintenanceTypeId()));
             maintenance.setMaintenanceType(maintenanceType);
+        }
+
+        if (dto.getTechnicianId() != null) {
+            User technician = userRepository.findById(dto.getTechnicianId())
+                    .orElseThrow(() -> new RuntimeException("Technician not found with id " + dto.getTechnicianId()));
+            maintenance.setTechnician(technician);
+        } else {
+            maintenance.setTechnician(null);
         }
 
         validateNoOverlap(maintenance.getSimulator().getId(), dto.getFecIni(), dto.getFecFin(),

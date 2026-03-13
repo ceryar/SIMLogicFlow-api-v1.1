@@ -69,4 +69,9 @@ public class UserController {
         String newPassword = body.get("newPassword");
         userService.changePassword(id, newPassword);
     }
+
+    @GetMapping("/role/{roleName}")
+    public java.util.List<com.simlogicflow.model.User> getUsersByRole(@PathVariable("roleName") String roleName) {
+        return userService.getUsersByRoleName(roleName);
+    }
 }

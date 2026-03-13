@@ -232,4 +232,10 @@ public class UserService {
                 user.setMustChangePassword(false);
                 userRepository.save(user);
         }
+
+        public java.util.List<User> getUsersByRoleName(String roleName) {
+                Role role = rolRepository.findByName(roleName)
+                                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+                return userRepository.findByRole(role);
+        }
 }

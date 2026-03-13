@@ -1,5 +1,6 @@
 
 package com.simlogicflow.service;
+
 //import com.simlogicflow.model.Role;
 import com.simlogicflow.model.User;
 import com.simlogicflow.repository.UserRepository;
@@ -24,7 +25,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
-        user.getEmail(),
-        user.getPassword(),
-        List.of(new SimpleGrantedAuthority(user.getRole().getName())));
-    }}
+                user.getEmail(),
+                user.getPassword(),
+                user.getActive() != null ? user.getActive() : true,
+                true,
+                true,
+                true,
+                List.of(new SimpleGrantedAuthority(user.getRole().getName())));
+    }
+}

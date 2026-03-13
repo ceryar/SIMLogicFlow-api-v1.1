@@ -37,7 +37,6 @@ public class MaintenanceHistory {
     @Column(name = "change_date")
     private LocalDateTime changeDate;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "maintenance_id", nullable = false)
     private Maintenance maintenance;

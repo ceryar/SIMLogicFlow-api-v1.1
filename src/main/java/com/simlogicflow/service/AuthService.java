@@ -17,13 +17,17 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User login(LoginDto logintDto){
+    public User login(LoginDto logintDto) {
 
         User user = userRepository.findByEmail(logintDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if(!passwordEncoder.matches(logintDto.getPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(logintDto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta");
+        }
+
+        if (user.getActive() != null && !user.getActive()) {
+            throw new RuntimeException("Tu cuenta está inactiva. Por favor, contacta al administrador.");
         }
 
         return user;
