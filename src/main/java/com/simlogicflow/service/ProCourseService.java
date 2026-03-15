@@ -66,32 +66,32 @@ public class ProCourseService {
             proCourse.setCourse(course);
         }
 
-        validateNoOverlap(proCourse, proCourse.getId());
+        validateNoOverlap(proCourse);
     }
 
-    private void validateNoOverlap(ProCourse session, Long excludeId) {
+    private void validateNoOverlap(ProCourse session) {
         Course currentCourse = session.getCourse();
         if (currentCourse == null)
             return;
 
         List<ProCourse> overlaps = proCourseRepository.findTimeOverlappingSessions(
-                session.getFecha(), session.getHoraini(), session.getHorafin(), excludeId);
+                session.getFecha(), session.getHoraini(), session.getHorafin(), session.getId());
 
         for (ProCourse other : overlaps) {
             Course otherCourse = other.getCourse();
             if (otherCourse == null)
                 continue;
 
-            // 1. Room Conflict (except Pseudo rooms)
+            // 1. Conflicto de Sala (excepto Pseudopilotos)
             Set<Room> currentRooms = currentCourse.getRooms();
             Set<Room> otherRooms = otherCourse.getRooms();
 
             if (currentRooms != null && otherRooms != null) {
                 for (Room room : currentRooms) {
-                    String roomName = (room.getName() != null) ? room.getName().toUpperCase() : "";
-                    if (roomName.contains("PSEUDO")) {
+                    String name = room.getName();
+                    if (name != null && name.toUpperCase().contains("PSEUDO"))
                         continue;
-                    }
+
                     for (Room oRoom : otherRooms) {
                         if (room.getId().equals(oRoom.getId())) {
                             throw new ScheduleConflictException(
@@ -102,38 +102,38 @@ public class ProCourseService {
                 }
             }
 
-            // 2. Personnel Conflict
+            // 2. Conflicto de Personal
             // Instructor
-            User currentInstr = currentCourse.getInstructor();
-            User otherInstr = otherCourse.getInstructor();
-            if (currentInstr != null && otherInstr != null && currentInstr.getId().equals(otherInstr.getId())) {
+            User curInstr = currentCourse.getInstructor();
+            User othInstr = otherCourse.getInstructor();
+            if (curInstr != null && othInstr != null && curInstr.getId().equals(othInstr.getId())) {
                 throw new ScheduleConflictException(
-                        "Conflicto de INSTRUCTOR: " + currentInstr.getFirstName()
+                        "Conflicto de INSTRUCTOR: " + curInstr.getFirstName()
                                 + " ya tiene una sesión asignada en el curso \"" + otherCourse.getName()
                                 + "\" en este horario.");
             }
 
-            // Coordinator
-            User currentCoord = currentCourse.getCoordinator();
-            User otherCoord = otherCourse.getCoordinator();
-            if (currentCoord != null && otherCoord != null && currentCoord.getId().equals(otherCoord.getId())) {
+            // Coordinador
+            User curCoord = currentCourse.getCoordinator();
+            User othCoord = otherCourse.getCoordinator();
+            if (curCoord != null && othCoord != null && curCoord.getId().equals(othCoord.getId())) {
                 throw new ScheduleConflictException(
-                        "Conflicto de COORDINADOR: " + currentCoord.getFirstName()
+                        "Conflicto de COORDINADOR: " + curCoord.getFirstName()
                                 + " ya tiene una sesión asignada en el curso \"" + otherCourse.getName()
                                 + "\" en este horario.");
             }
 
-            // 3. Student Conflict
-            Set<User> currentUsers = currentCourse.getUsers();
-            Set<User> otherUsers = otherCourse.getUsers();
-            if (currentUsers != null && otherUsers != null) {
-                for (User student : currentUsers) {
-                    for (User oStudent : otherUsers) {
+            // 3. Estudiantes
+            Set<User> curUsers = currentCourse.getUsers();
+            Set<User> othUsers = otherCourse.getUsers();
+            if (curUsers != null && othUsers != null) {
+                for (User student : curUsers) {
+                    for (User oStudent : othUsers) {
                         if (student.getId().equals(oStudent.getId())) {
-                            String name = student.getFirstName()
+                            String fullName = student.getFirstName()
                                     + (student.getLastname() != null ? " " + student.getLastname() : "");
                             throw new ScheduleConflictException(
-                                    "Conflicto de ESTUDIANTE: " + name + " ya tiene clase en el curso \""
+                                    "Conflicto de ESTUDIANTE: " + fullName + " ya tiene clase en el curso \""
                                             + otherCourse.getName() + "\" en este horario.");
                         }
                     }
@@ -141,7 +141,7 @@ public class ProCourseService {
             }
         }
 
-        // 4. Maintenance (Simulator level)
+        // 4. Mantenimiento (Nivel de Simulador completo)
         if (currentCourse.getSimulator() != null) {
             List<Maintenance> maintenanceOverlaps = maintenanceRepository
                     .findOverlappingMaintenances(currentCourse.getSimulator().getId(), session.getFecha(),
