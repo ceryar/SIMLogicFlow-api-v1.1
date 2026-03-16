@@ -1,9 +1,6 @@
 package com.simlogicflow.model;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +12,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -77,4 +75,55 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private java.util.List<ProCourse> proCourses;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public java.time.LocalDate getFecInicio() {
+        return fecInicio;
+    }
+
+    public java.time.LocalDate getFecFin() {
+        return fecFin;
+    }
+
+    public Integer getHoras() {
+        return horas;
+    }
+
+    public java.util.Set<Room> getRooms() {
+        return rooms;
+    }
+
+    public Simulator getSimulator() {
+        return simulator;
+    }
+
+    public java.util.Set<User> getUsers() {
+        return users;
+    }
+
+    public User getCoordinator() {
+        return coordinator;
+    }
+
+    public User getPseudoPilot() {
+        return pseudoPilot;
+    }
+
+    public User getInstructor() {
+        return instructor;
+    }
+
+    public java.util.List<ProCourse> getProCourses() {
+        return proCourses;
+    }
 }

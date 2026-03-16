@@ -73,4 +73,47 @@ public class User {
     @Column(name = "must_change_password")
     private Boolean mustChangePassword = false;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public String getSecondlasname() {
+        return secondlasname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public java.util.Set<Course> getCourses() {
+        return courses;
+    }
+
+    public Boolean getMustChangePassword() {
+        return mustChangePassword;
+    }
 }

@@ -11,7 +11,10 @@ import com.simlogicflow.repository.RolRepository;
 import com.simlogicflow.repository.UserRepository;
 import com.simlogicflow.model.Room;
 import com.simlogicflow.model.User;
+import com.simlogicflow.model.ProCourse;
+import com.simlogicflow.repository.ProCourseRepository;
 import java.util.Set;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,9 @@ public class UserService {
 
         @Autowired
         private CourseRepository courseRepository;
+
+        @Autowired
+        private ProCourseRepository proCourseRepository;
 
         public User save(UserDto userDto) {
 
@@ -125,9 +131,35 @@ public class UserService {
                                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
                 validateCourseCapacity(course, user);
+                validateNoScheduleConflict(course, user);
 
                 user.getCourses().add(course);
                 return userRepository.save(user);
+        }
+
+        private void validateNoScheduleConflict(Course newCourse, User user) {
+                if (newCourse.getProCourses() == null || newCourse.getProCourses().isEmpty()) {
+                        return;
+                }
+
+                for (ProCourse session : newCourse.getProCourses()) {
+                        List<ProCourse> conflicts = proCourseRepository
+                                        .findUserOverlappingSessions(user.getId(), session.getFecha(),
+                                                        session.getHoraini(),
+                                                        session.getHorafin());
+
+                        if (!conflicts.isEmpty()) {
+                                ProCourse conflict = conflicts.get(0);
+                                throw new com.simlogicflow.exceptions.ScheduleConflictException(
+                                                "Conflicto de HORARIO: El usuario " + user.getFirstName()
+                                                                + " ya tiene el curso \""
+                                                                + conflict.getCourse().getName()
+                                                                + "\" programado para el "
+                                                                + session.getFecha() + " de " + conflict.getHoraini()
+                                                                + " a "
+                                                                + conflict.getHorafin());
+                        }
+                }
         }
 
         private void validateCourseCapacity(Course course, User userToAdd) {

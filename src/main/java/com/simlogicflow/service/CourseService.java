@@ -15,6 +15,8 @@ import com.simlogicflow.repository.RoomRepository;
 import com.simlogicflow.repository.SimulatorRepository;
 import com.simlogicflow.repository.UserRepository;
 import com.simlogicflow.model.User;
+import com.simlogicflow.model.ProCourse;
+import com.simlogicflow.repository.ProCourseRepository;
 
 @Service
 public class CourseService {
@@ -30,6 +32,9 @@ public class CourseService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProCourseRepository proCourseRepository;
 
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
@@ -90,6 +95,7 @@ public class CourseService {
         if (dto.getCoordinatorId() != null) {
             User coordinator = userRepository.findById(dto.getCoordinatorId())
                     .orElseThrow(() -> new RuntimeException("Coordinator not found with id " + dto.getCoordinatorId()));
+            validateUserAvailability(coordinator, course);
             course.setCoordinator(coordinator);
         } else {
             course.setCoordinator(null);
@@ -98,6 +104,7 @@ public class CourseService {
         if (dto.getPseudoPilotId() != null) {
             User pseudoPilot = userRepository.findById(dto.getPseudoPilotId())
                     .orElseThrow(() -> new RuntimeException("PseudoPilot not found with id " + dto.getPseudoPilotId()));
+            validateUserAvailability(pseudoPilot, course);
             course.setPseudoPilot(pseudoPilot);
         } else {
             course.setPseudoPilot(null);
@@ -106,9 +113,32 @@ public class CourseService {
         if (dto.getInstructorId() != null) {
             User instructor = userRepository.findById(dto.getInstructorId())
                     .orElseThrow(() -> new RuntimeException("Instructor not found with id " + dto.getInstructorId()));
+            validateUserAvailability(instructor, course);
             course.setInstructor(instructor);
         } else {
             course.setInstructor(null);
+        }
+    }
+
+    private void validateUserAvailability(User user, Course course) {
+        if (user == null || course.getId() == null || course.getProCourses() == null
+                || course.getProCourses().isEmpty()) {
+            return;
+        }
+
+        for (ProCourse session : course.getProCourses()) {
+            List<ProCourse> conflicts = proCourseRepository.findUserOverlappingSessions(
+                    user.getId(), session.getFecha(), session.getHoraini(), session.getHorafin());
+
+            for (ProCourse conflict : conflicts) {
+                if (!conflict.getCourse().getId().equals(course.getId())) {
+                    throw new com.simlogicflow.exceptions.ScheduleConflictException(
+                            "Conflicto de disponibilidad: " + user.getFirstName() + " " + user.getLastname() +
+                                    " ya tiene sesión en el curso \"" + conflict.getCourse().getName() +
+                                    "\" el " + session.getFecha() + " de " + conflict.getHoraini() +
+                                    " a " + conflict.getHorafin());
+                }
+            }
         }
     }
 }

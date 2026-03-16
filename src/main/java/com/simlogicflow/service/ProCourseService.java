@@ -1,8 +1,10 @@
 package com.simlogicflow.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,41 +104,22 @@ public class ProCourseService {
                 }
             }
 
-            // 2. Conflicto de Personal
-            // Instructor
-            User curInstr = currentCourse.getInstructor();
-            User othInstr = otherCourse.getInstructor();
-            if (curInstr != null && othInstr != null && curInstr.getId().equals(othInstr.getId())) {
-                throw new ScheduleConflictException(
-                        "Conflicto de INSTRUCTOR: " + curInstr.getFirstName()
-                                + " ya tiene una sesión asignada en el curso \"" + otherCourse.getName()
-                                + "\" en este horario.");
-            }
+            // 2. Conflicto de Personal y Estudiantes (Identidad-céntrico)
+            Set<Long> currentParticipants = getAllParticipantIds(currentCourse);
+            Set<Long> otherParticipants = getAllParticipantIds(otherCourse);
 
-            // Coordinador
-            User curCoord = currentCourse.getCoordinator();
-            User othCoord = otherCourse.getCoordinator();
-            if (curCoord != null && othCoord != null && curCoord.getId().equals(othCoord.getId())) {
-                throw new ScheduleConflictException(
-                        "Conflicto de COORDINADOR: " + curCoord.getFirstName()
-                                + " ya tiene una sesión asignada en el curso \"" + otherCourse.getName()
-                                + "\" en este horario.");
-            }
+            for (Long userId : currentParticipants) {
+                if (otherParticipants.contains(userId)) {
+                    User user = currentCourse.getUsers().stream()
+                            .filter(u -> u.getId().equals(userId))
+                            .findFirst()
+                            .orElseGet(() -> findUserInRoles(currentCourse, userId));
 
-            // 3. Estudiantes
-            Set<User> curUsers = currentCourse.getUsers();
-            Set<User> othUsers = otherCourse.getUsers();
-            if (curUsers != null && othUsers != null) {
-                for (User student : curUsers) {
-                    for (User oStudent : othUsers) {
-                        if (student.getId().equals(oStudent.getId())) {
-                            String fullName = student.getFirstName()
-                                    + (student.getLastname() != null ? " " + student.getLastname() : "");
-                            throw new ScheduleConflictException(
-                                    "Conflicto de ESTUDIANTE: " + fullName + " ya tiene clase en el curso \""
-                                            + otherCourse.getName() + "\" en este horario.");
-                        }
-                    }
+                    String userName = (user != null) ? user.getFirstName() + " " + user.getLastname() : "Un usuario";
+                    throw new ScheduleConflictException(
+                            "Conflicto de HORARIO: " + userName + " ya tiene una sesión asignada en el curso \""
+                                    + otherCourse.getName()
+                                    + "\" en este horario (mismo usuario, diferentes roles posibles).");
                 }
             }
         }
@@ -151,5 +134,29 @@ public class ProCourseService {
                         "El simulador se encuentra en mantenimiento en la fecha especificada.");
             }
         }
+    }
+
+    private Set<Long> getAllParticipantIds(Course course) {
+        Set<Long> ids = new HashSet<>();
+        if (course.getUsers() != null) {
+            ids.addAll(course.getUsers().stream().map(User::getId).collect(Collectors.toSet()));
+        }
+        if (course.getInstructor() != null)
+            ids.add(course.getInstructor().getId());
+        if (course.getCoordinator() != null)
+            ids.add(course.getCoordinator().getId());
+        if (course.getPseudoPilot() != null)
+            ids.add(course.getPseudoPilot().getId());
+        return ids;
+    }
+
+    private User findUserInRoles(Course course, Long userId) {
+        if (course.getInstructor() != null && course.getInstructor().getId().equals(userId))
+            return course.getInstructor();
+        if (course.getCoordinator() != null && course.getCoordinator().getId().equals(userId))
+            return course.getCoordinator();
+        if (course.getPseudoPilot() != null && course.getPseudoPilot().getId().equals(userId))
+            return course.getPseudoPilot();
+        return null;
     }
 }

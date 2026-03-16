@@ -1,8 +1,5 @@
 package com.simlogicflow.model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,4 +45,23 @@ public class ProCourse {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    public java.time.LocalTime getHoraini() {
+        return horaini;
+    }
+
+    public java.time.LocalTime getHorafin() {
+        return horafin;
+    }
+
+    public java.time.LocalDate getFecha() {
+        return fecha;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
 }
