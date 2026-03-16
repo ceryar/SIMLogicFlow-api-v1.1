@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProCourseRepository extends JpaRepository<ProCourse, Long> {
 
+        @org.springframework.data.jpa.repository.Query("SELECT p FROM ProCourse p JOIN FETCH p.course c JOIN FETCH c.simulator s")
+        java.util.List<ProCourse> findAll();
+
         @org.springframework.data.jpa.repository.Query("SELECT p FROM ProCourse p " +
                         "WHERE p.course.simulator.id = :simulatorId " +
                         "AND p.fecha = :fecha " +
