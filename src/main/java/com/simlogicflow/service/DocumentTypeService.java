@@ -33,7 +33,7 @@ public class DocumentTypeService {
             updateDocumentTypeFromDto(documentType, dto);
             return documentTypeRepository.save(documentType);
         }
-        throw new RuntimeException("DocumentType not found with id " + id);
+        throw new RuntimeException("Tipo de documento no encontrado con ID " + id);
     }
 
     public void deleteDocumentType(Long id) {

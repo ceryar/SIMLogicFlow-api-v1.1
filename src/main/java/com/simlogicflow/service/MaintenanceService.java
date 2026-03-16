@@ -51,7 +51,7 @@ public class MaintenanceService {
             updateMaintenanceFromDto(maintenance, dto);
             return maintenanceRepository.save(maintenance);
         }
-        throw new RuntimeException("Maintenance not found with id " + id);
+        throw new RuntimeException("Mantenimiento no encontrado con ID " + id);
     }
 
     public void deleteMaintenance(Long id) {
@@ -68,20 +68,20 @@ public class MaintenanceService {
 
         if (dto.getSimulatorId() != null) {
             Simulator simulator = simulatorRepository.findById(dto.getSimulatorId())
-                    .orElseThrow(() -> new RuntimeException("Simulator not found with id " + dto.getSimulatorId()));
+                    .orElseThrow(() -> new RuntimeException("Simulador no encontrado con ID " + dto.getSimulatorId()));
             maintenance.setSimulator(simulator);
         }
 
         if (dto.getMaintenanceTypeId() != null) {
             MaintenanceType maintenanceType = maintenanceTypeRepository.findById(dto.getMaintenanceTypeId())
                     .orElseThrow(() -> new RuntimeException(
-                            "MaintenanceType not found with id " + dto.getMaintenanceTypeId()));
+                            "Tipo de mantenimiento no encontrado con ID " + dto.getMaintenanceTypeId()));
             maintenance.setMaintenanceType(maintenanceType);
         }
 
         if (dto.getTechnicianId() != null) {
             User technician = userRepository.findById(dto.getTechnicianId())
-                    .orElseThrow(() -> new RuntimeException("Technician not found with id " + dto.getTechnicianId()));
+                    .orElseThrow(() -> new RuntimeException("Técnico no encontrado con ID " + dto.getTechnicianId()));
             maintenance.setTechnician(technician);
         } else {
             maintenance.setTechnician(null);

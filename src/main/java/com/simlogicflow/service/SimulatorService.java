@@ -42,7 +42,7 @@ public class SimulatorService {
             updateSimulatorFromDto(simulator, dto);
             return simulatorRepository.save(simulator);
         }
-        throw new RuntimeException("Simulator not found with id " + id);
+        throw new RuntimeException("Simulador no encontrado con ID " + id);
     }
 
     public void deleteSimulator(Long id) {

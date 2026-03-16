@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProCourseRepository extends JpaRepository<ProCourse, Long> {
 
-        @org.springframework.data.jpa.repository.Query("SELECT p FROM ProCourse p JOIN FETCH p.course c JOIN FETCH c.simulator s")
+        @org.springframework.data.jpa.repository.Query("SELECT p FROM ProCourse p JOIN FETCH p.course c JOIN FETCH c.simulator s LEFT JOIN FETCH c.instructor i LEFT JOIN FETCH c.pseudoPilot pp LEFT JOIN FETCH c.coordinator co")
         java.util.List<ProCourse> findAll();
 
         @org.springframework.data.jpa.repository.Query("SELECT p FROM ProCourse p " +

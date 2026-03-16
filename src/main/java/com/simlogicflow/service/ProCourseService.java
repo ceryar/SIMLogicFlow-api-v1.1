@@ -49,7 +49,7 @@ public class ProCourseService {
             updateProCourseFromDto(proCourse, dto);
             return proCourseRepository.save(proCourse);
         }
-        throw new RuntimeException("ProCourse not found with id " + id);
+        throw new RuntimeException("Programación de curso no encontrada con ID " + id);
     }
 
     public void deleteProCourse(Long id) {
@@ -64,7 +64,7 @@ public class ProCourseService {
 
         if (dto.getCourseId() != null) {
             Course course = courseRepository.findById(dto.getCourseId())
-                    .orElseThrow(() -> new RuntimeException("Course not found with id " + dto.getCourseId()));
+                    .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID " + dto.getCourseId()));
             proCourse.setCourse(course);
         }
 

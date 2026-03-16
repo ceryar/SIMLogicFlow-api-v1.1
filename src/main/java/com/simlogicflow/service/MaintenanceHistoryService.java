@@ -38,7 +38,7 @@ public class MaintenanceHistoryService {
             updateHistoryFromDto(history, dto);
             return maintenanceHistoryRepository.save(history);
         }
-        throw new RuntimeException("MaintenanceHistory not found with id " + id);
+        throw new RuntimeException("Historial de mantenimiento no encontrado con ID " + id);
     }
 
     public void deleteMaintenanceHistory(Long id) {

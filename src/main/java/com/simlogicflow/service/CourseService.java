@@ -61,7 +61,7 @@ public class CourseService {
             updateCourseFromDto(course, dto);
             return courseRepository.save(course);
         }
-        throw new RuntimeException("Course not found with id " + id);
+        throw new RuntimeException("Curso no encontrado con ID " + id);
     }
 
     public void deleteCourse(Long id) {
@@ -88,13 +88,14 @@ public class CourseService {
 
         if (dto.getSimulatorId() != null) {
             Simulator simulator = simulatorRepository.findById(dto.getSimulatorId())
-                    .orElseThrow(() -> new RuntimeException("Simulator not found with id " + dto.getSimulatorId()));
+                    .orElseThrow(() -> new RuntimeException("Simulador no encontrado con ID " + dto.getSimulatorId()));
             course.setSimulator(simulator);
         }
 
         if (dto.getCoordinatorId() != null) {
             User coordinator = userRepository.findById(dto.getCoordinatorId())
-                    .orElseThrow(() -> new RuntimeException("Coordinator not found with id " + dto.getCoordinatorId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Coordinador no encontrado con ID " + dto.getCoordinatorId()));
             validateUserAvailability(coordinator, course);
             course.setCoordinator(coordinator);
         } else {
@@ -103,7 +104,8 @@ public class CourseService {
 
         if (dto.getPseudoPilotId() != null) {
             User pseudoPilot = userRepository.findById(dto.getPseudoPilotId())
-                    .orElseThrow(() -> new RuntimeException("PseudoPilot not found with id " + dto.getPseudoPilotId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Pseudopiloto no encontrado con ID " + dto.getPseudoPilotId()));
             validateUserAvailability(pseudoPilot, course);
             course.setPseudoPilot(pseudoPilot);
         } else {
@@ -112,7 +114,8 @@ public class CourseService {
 
         if (dto.getInstructorId() != null) {
             User instructor = userRepository.findById(dto.getInstructorId())
-                    .orElseThrow(() -> new RuntimeException("Instructor not found with id " + dto.getInstructorId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Instructor no encontrado con ID " + dto.getInstructorId()));
             validateUserAvailability(instructor, course);
             course.setInstructor(instructor);
         } else {

@@ -43,11 +43,11 @@ public class UserService {
         public User save(UserDto userDto) {
 
                 Role role = rolRepository.findById(userDto.getRoleId())
-                                .orElseThrow(() -> new RuntimeException("Role not found"));
+                                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
                 DocumentType documentType = documentTypeRepository
                                 .findById(userDto.getDocumentTypeId())
-                                .orElseThrow(() -> new RuntimeException("Document type not found"));
+                                .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
 
                 // Generate default password: FirstCharOfFirstName + docNumber +
                 // FirstCharOfLastName
@@ -86,18 +86,18 @@ public class UserService {
 
         public User updateUser(Long id, UserDto userDto) {
                 User user = userRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
                 if (userDto.getRoleId() != null) {
                         Role role = rolRepository.findById(userDto.getRoleId())
-                                        .orElseThrow(() -> new RuntimeException("Role not found"));
+                                        .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
                         user.setRole(role);
                 }
 
                 if (userDto.getDocumentTypeId() != null) {
                         DocumentType documentType = documentTypeRepository
                                         .findById(userDto.getDocumentTypeId())
-                                        .orElseThrow(() -> new RuntimeException("Document type not found"));
+                                        .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
                         user.setDocumentType(documentType);
                 }
 
@@ -119,16 +119,16 @@ public class UserService {
 
         public void deleteUser(Long id) {
                 User user = userRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                 userRepository.delete(user);
         }
 
         public User assignCourseToUser(Long userId, Long courseId) {
                 User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
                 Course course = courseRepository.findById(courseId)
-                                .orElseThrow(() -> new RuntimeException("Course not found"));
+                                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
                 validateCourseCapacity(course, user);
                 validateNoScheduleConflict(course, user);
@@ -289,10 +289,10 @@ public class UserService {
 
         public User removeCourseFromUser(Long userId, Long courseId) {
                 User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
                 Course course = courseRepository.findById(courseId)
-                                .orElseThrow(() -> new RuntimeException("Course not found"));
+                                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
                 user.getCourses().remove(course);
                 return userRepository.save(user);
@@ -300,13 +300,13 @@ public class UserService {
 
         public Set<Course> getCoursesByUser(Long userId) {
                 User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                 return user.getCourses();
         }
 
         public void changePassword(Long userId, String newPassword) {
                 User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                 user.setPassword(passwordEncoder.encode(newPassword));
                 user.setMustChangePassword(false);
                 userRepository.save(user);
@@ -314,7 +314,7 @@ public class UserService {
 
         public java.util.List<User> getUsersByRoleName(String roleName) {
                 Role role = rolRepository.findByName(roleName)
-                                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+                                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + roleName));
                 return userRepository.findByRole(role);
         }
 }

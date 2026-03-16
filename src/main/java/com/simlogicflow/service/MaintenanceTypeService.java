@@ -33,7 +33,7 @@ public class MaintenanceTypeService {
             updateMaintenanceTypeFromDto(maintenanceType, dto);
             return maintenanceTypeRepository.save(maintenanceType);
         }
-        throw new RuntimeException("MaintenanceType not found with id " + id);
+        throw new RuntimeException("Tipo de mantenimiento no encontrado con ID " + id);
     }
 
     public void deleteMaintenanceType(Long id) {

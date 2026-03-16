@@ -41,7 +41,7 @@ public class RoomService {
             updateRoomFromDto(room, dto);
             return roomRepository.save(room);
         }
-        throw new RuntimeException("Room not found with id " + id);
+        throw new RuntimeException("Aula no encontrada con ID " + id);
     }
 
     public void deleteRoom(Long id) {
