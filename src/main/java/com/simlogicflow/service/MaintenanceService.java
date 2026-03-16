@@ -64,6 +64,7 @@ public class MaintenanceService {
         maintenance.setFecFin(dto.getFecFin());
         maintenance.setHoraIni(dto.getHoraIni());
         maintenance.setHoraFin(dto.getHoraFin());
+        maintenance.setHoras(dto.getHoras());
 
         if (dto.getSimulatorId() != null) {
             Simulator simulator = simulatorRepository.findById(dto.getSimulatorId())

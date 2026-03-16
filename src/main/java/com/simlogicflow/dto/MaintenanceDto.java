@@ -2,7 +2,6 @@ package com.simlogicflow.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +21,6 @@ public class MaintenanceDto {
     private Long simulatorId;
     private Long maintenanceTypeId;
     private Long technicianId;
+    private Integer horas;
 
 }
